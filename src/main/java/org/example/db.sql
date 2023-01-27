@@ -67,3 +67,8 @@ select * from dishes;
 select * from orders;
 select * from cafes;
 select * from clients;
+
+select orders.id, cafes.name, clients.name, dishes.name, price, order_time from orders
+join cafes on(orders.cafe_id = cafes.id)
+join clients on(orders.client_id = clients.id)
+join dishes on(orders.dish_id = dishes.id);

@@ -13,15 +13,21 @@ public class Main {
         try {
             connection = DriverManager.getConnection(URL, USER_NAME, PASSWORD);
             Statement statement = connection.createStatement();
-            String SQL = "select * from orders order by id";
+            String SQL = "select orders.id, cafes.name, clients.name, dishes.name, price, order_time from orders\n" +
+                    "join cafes on(orders.cafe_id = cafes.id)\n" +
+                    "join clients on(orders.client_id = clients.id)\n" +
+                    "join dishes on(orders.dish_id = dishes.id);";
             ResultSet resultSet = statement.executeQuery(SQL);
-            System.out.println("Все заказы полученные кафе:");
+            System.out.println("Все заказы полученные кафе:" +
+                    "\n   id    |   cafes.name  |   clients.name   |   dishes.name   |   price   |   order_time");
+
             while (resultSet.next()) {
                 System.out.println(resultSet.getInt("id") + " - " +
-                        resultSet.getInt("cafe_id") + " - " +
-                        resultSet.getInt("client_id") + " - " +
-                        resultSet.getInt("dish_id") + " - " +
-                        resultSet.getString("order_time"));
+                        resultSet.getString(2) + " - " +
+                        resultSet.getString(3) + " - " +
+                        resultSet.getString(4) + " - " +
+                        resultSet.getDouble(5) + " - " +
+                        resultSet.getString(6));
             }
 
             SQL = "select name, count(*) from dishes\n" +
@@ -29,14 +35,16 @@ public class Main {
                     "group by orders.dish_id, name order by count(*) desc\n" +
                     "limit 3";
             resultSet = statement.executeQuery(SQL);
-            System.out.println("\nТоп 3 популярных блюда:");
+            System.out.println("\nТоп 3 популярных блюда:" +
+                    "\n   name  |   id");
             while (resultSet.next()) {
                 System.out.println(resultSet.getString("name") + " - " + resultSet.getInt("count"));
             }
 
             SQL = "select * from dishes order by price";
             resultSet = statement.executeQuery(SQL);
-            System.out.println("\nСортировка по ценам блюд:");
+            System.out.println("\nСортировка по ценам блюд:" +
+                    "\n   id    |   name   |   price");
             while (resultSet.next()) {
                 System.out.println(resultSet.getInt("id") + " - " +
                         resultSet.getString("name") + " - " +
@@ -45,7 +53,8 @@ public class Main {
 
             SQL = "select * from dishes where id not in( select dish_id from orders group by dish_id )";
             resultSet = statement.executeQuery(SQL);
-            System.out.println("\nБлюда которые никогда не заказывались:");
+            System.out.println("\nБлюда которые никогда не заказывались:" +
+                    "\n   id    |   name   |    price");
             while (resultSet.next()) {
                 System.out.println(resultSet.getInt("id") + " - " +
                         resultSet.getString("name") + " - " +
