@@ -67,21 +67,3 @@ select * from dishes;
 select * from orders;
 select * from cafes;
 select * from clients;
-
--- Tasks --
-
--- Все заказы полученные кафе
-select * from orders order by id;
-
--- Топ 3 популярных блюда
-select name, count(*) from dishes
-join orders on(dishes.id = orders.dish_id)
-group by orders.dish_id, name order by count(*) desc
-limit 3;
-
--- Сортировка по ценам блюд
-select * from dishes order by price;
-
--- Какие блюда никогда не заказывались
-select * from dishes where id not in( select dish_id from orders group by dish_id );
-
